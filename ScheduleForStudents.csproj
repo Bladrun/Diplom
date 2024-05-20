@@ -178,12 +178,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SemestrAdd.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SemestrAdd.Designer.cs">
-      <DependentUpon>SemestrAdd.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Controls\GroupsControl.resx">
       <DependentUpon>GroupsControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -209,9 +203,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SemestrAdd.resx">
-      <DependentUpon>SemestrAdd.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
