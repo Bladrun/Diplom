@@ -24,11 +24,12 @@ namespace ScheduleForStudents
 
         private void InitializeDB()
         {
-            server = "localhost";
-            port = "3307";
-            database = "schedule";
-            uid = "root1";
-            password = "";
+
+            server = "sql7.freesqldatabase.com";
+            port = "3306";
+            database = "sql7707770";
+            uid = "sql7707770";
+            password = "kXTf81kkZI";
             string connectionString;
             connectionString = $"SERVER={server};PORT={port};DATABASE={database};UID={uid};PASSWORD={password};";
 
