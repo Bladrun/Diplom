@@ -18,10 +18,9 @@ namespace ScheduleForStudents.Controls
             LoadTeachers();
         }
 
-       
-
         private void TeachersControl_Load(object sender, EventArgs e)
         {
+            dataGridViewTeachers.CellEndEdit += dataGridViewTeachers_CellEndEdit;
             toolTip1.SetToolTip(button1, "Нажмите, чтобы синхронизировать данные");
             toolTip4.SetToolTip(button3, "Нажмите, чтобы экспортировать данные в Excel-таблицу");
             toolTip5.SetToolTip(VisiblebuttonDeleteTeach, "Нажмите, чтобы удалить данные");
@@ -154,13 +153,32 @@ namespace ScheduleForStudents.Controls
             string searchText = textBoxSearch.Text.Trim();
 
             DataView dv = dataTable.DefaultView;
-            dv.RowFilter = string.Format("fio LIKE '%{0}%' OR does_work_or_not LIKE '%{0}%'", searchText);
+
+            if (string.IsNullOrEmpty(searchText))
+            {
+                // Сбрасываем фильтр, если строка поиска пуста
+                dv.RowFilter = string.Empty;
+            }
+            else
+            {
+                // Экранирование специальных символов для строки поиска
+                searchText = searchText.Replace("[", "[[]")
+                                       .Replace("%", "[%]")
+                                       .Replace("_", "[_]")
+                                       .Replace("'", "''");
+
+                // Применяем фильтр для точного соответствия
+                dv.RowFilter = string.Format("fio = '{0}' OR does_work_or_not = '{0}'", searchText);
+            }
+
             dataGridViewTeachers.DataSource = dv;
+ 
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             LoadTeachers();
+            MessageBox.Show("База данных синхронизирована");
         }
 
         private void dataGridViewTeachers_RowValidated(object sender, DataGridViewCellEventArgs e)

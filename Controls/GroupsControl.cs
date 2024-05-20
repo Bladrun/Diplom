@@ -26,9 +26,10 @@ namespace ScheduleForStudents.Controls
 
         private void GroupsControl_Load(object sender, EventArgs e)
         {
+            dataGridViewGroups.CellEndEdit += dataGridViewGroups_CellEndEdit;
             toolTip1.SetToolTip(button2, "Нажмите, чтобы синхронизировать данные");
             toolTip4.SetToolTip(button3, "Нажмите, чтобы экспортировать данные в Excel-таблицу");
-            toolTip5.SetToolTip(VisiblebuttonDeleteGroup, "Нажмите, чтобы удалить данные");
+            toolTip5.SetToolTip(VisiblebuttonDeleteGroup, "Нажмите, чтобы удалить данные"); //
         }
 
         private void InitializeDBConnection()
@@ -66,9 +67,28 @@ namespace ScheduleForStudents.Controls
         private void textBoxSearch_TextChanged(object sender, EventArgs e)
         {
             string searchText = textBoxSearch.Text.Trim();
+
             DataView dv = dataTable.DefaultView;
-            dv.RowFilter = string.Format("group_number LIKE '%{0}%' OR short_number LIKE '%{0}%'", searchText);
+
+            if (string.IsNullOrEmpty(searchText))
+            {
+                // Сбрасываем фильтр, если строка поиска пуста
+                dv.RowFilter = string.Empty;
+            }
+            else
+            {
+                // Экранирование специальных символов для строки поиска
+                searchText = searchText.Replace("[", "[[]")
+                                       .Replace("%", "[%]")
+                                       .Replace("_", "[_]")
+                                       .Replace("'", "''");
+
+                // Применяем фильтр для точного соответствия
+                dv.RowFilter = string.Format("group_number = '{0}' OR short_number = '{0}'", searchText);
+            }
+
             dataGridViewGroups.DataSource = dv;
+
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -176,6 +196,7 @@ namespace ScheduleForStudents.Controls
         private void button2_Click(object sender, EventArgs e)
         {
             LoadGroups();
+            MessageBox.Show("База данных синхронизирована");
         }
     }
 }

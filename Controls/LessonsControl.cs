@@ -13,278 +13,288 @@ using Microsoft.Office.Interop.Excel;
 using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Utilities;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using DataTable = System.Data.DataTable;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ScheduleForStudents.Controls
 {
     public partial class LessonsControl : UserControl
     {
-       
+        private MySqlConnection connection;
+        private MySqlDataAdapter dataAdapter;
+        private DataTable dataTable;
+
         public LessonsControl()
         {
             InitializeComponent();
-            toolTip1.SetToolTip(buttonEDITLESS, "Нажмите, чтобы сохранить изменения");
-            toolTip2.SetToolTip(buttonCANSELEDITLESS, "Нажмите, чтобы очистить изменения в полях");
-            toolTip3.SetToolTip(buttonEditVissibleLESS, "Нажмите, чтобы ввести изменения в таблицу");
-            toolTip4.SetToolTip(button1, "Нажмите, чтобы экспортировать данные в Excel-таблицу");
-            toolTip5.SetToolTip(VisiblebuttonDeleteLESS, "Нажмите, чтобы удалить данные");
-            toolTip6.SetToolTip(buttonAddLesson, "Нажмите, чтобы добавить данные в таблицу");
+            InitializeDBConnection();
+            LoadLessons();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             Excel.Application exApp = new Excel.Application();
-
             exApp.Workbooks.Add();
             Excel.Worksheet wsh = (Excel.Worksheet)exApp.ActiveSheet;
+
             int i, j;
-            for (i = 0; i <= dataGridViewLessons.RowCount - 1; i++)
+            for (i = 0; i <=  dataGridViewLessons.RowCount - 1; i++)
             {
-                for (j = 0; j <= dataGridViewLessons.ColumnCount - 1; j++)
+                for (j = 0; j <=  dataGridViewLessons.ColumnCount - 1; j++)
                 {
-                    wsh.Cells[i + 1, j + 1] = dataGridViewLessons[j, i].Value.ToString();
+                    object cellValue = dataGridViewLessons[j, i].Value;
+                    wsh.Cells[i + 1, j + 1] = cellValue != null ? cellValue.ToString() : ""; // Проверяем на null перед вызовом ToString()
                 }
             }
-
-
 
             exApp.Visible = true;
         }
 
-
-        public void LoadEditComboBoxTeacher()
+        private void InitializeDBConnection()
         {
-            //TeachersControlClass.getTeachers();
-
-            //comboBoxEDITEACH.DataSource = TeachersControlClass.dtTeachers;
-            //comboBoxEDITEACH.DisplayMember = "fio";
-            //comboBoxEDITEACH.ValueMember = "id_teacher";
+            DBManager dbManager = new DBManager();
+            connection = dbManager.GetConnection();
+            dataAdapter = new MySqlDataAdapter();
         }
 
-
-        public void LoadEditComboBoxGroup()
+        private void LoadData()
         {
-            //GroupsControlCLass.getGroups();
+            string query = "SELECT * FROM schedule_week";
+            dataAdapter = new MySqlDataAdapter(query, connection);
+            MySqlCommandBuilder commandBuilder = new MySqlCommandBuilder(dataAdapter);
+            dataTable = new DataTable();
+            try
+            {
+                connection.Open();
+                dataAdapter.Fill(dataTable);
+                dataGridViewLessons.DataSource = dataTable;
+                //AddComboBoxColumns();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+        
+        private void LoadLessons()
+        {
+            string query = "SELECT * FROM schedule_week";
+            dataAdapter = new MySqlDataAdapter(query, connection);
+            MySqlCommandBuilder commandBuilder = new MySqlCommandBuilder(dataAdapter);
+            dataTable = new DataTable();
 
-            //comboBoxEDITGROUP.DataSource = GroupsControlCLass.dtGroups;
-            //comboBoxEDITGROUP.DisplayMember = "short_number";
-            //comboBoxEDITGROUP.ValueMember = "id_group";
+            try
+            {
+                connection.Open();
+                dataAdapter.Fill(dataTable);
+                dataGridViewLessons.DataSource = dataTable;
+                AddComboBoxColumns();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
         }
 
-        public void LoadEditComboBoxSubject()
+        private void AddComboBoxColumns()
         {
-            //SubjectControlClass.getSubjects();
+            
 
-            //comboBoxEditsubject.DataSource = SubjectControlClass.dtSubjects;
-            //comboBoxEditsubject.DisplayMember = "name_of_the_subject";
-            //comboBoxEditsubject.ValueMember = "id_subject";
+            if (dataGridViewLessons.Columns["Subject"] == null)
+            {
+                // Load data for ComboBoxes
+                DataTable subjectsTable = LoadDataTable("SELECT id_subject, name_of_the_subject FROM subjects");
+                DataTable teachersTable = LoadDataTable("SELECT id_teacher, fio FROM teacher");
+                DataTable groupsTable = LoadDataTable("SELECT id_group, short_number FROM students_groups");
+
+                // Create and configure Subject ComboBox column
+                DataGridViewComboBoxColumn subjectComboBox = new DataGridViewComboBoxColumn
+                {
+                    DataPropertyName = "id_subject", // column name in schedule_week
+                    HeaderText = "Наименование предмета",
+                    DataSource = subjectsTable,
+                    ValueMember = "id_subject",
+                    DisplayMember = "name_of_the_subject",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                };
+
+                // Create and configure Teacher ComboBox column
+                DataGridViewComboBoxColumn teacherComboBox = new DataGridViewComboBoxColumn
+                {
+                    DataPropertyName = "id_teacher", // column name in schedule_week
+                    HeaderText = "Преподавателя",
+                    DataSource = teachersTable,
+                    ValueMember = "id_teacher",
+                    DisplayMember = "fio",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                };
+
+                DataGridViewComboBoxColumn groupComboBox = new DataGridViewComboBoxColumn
+                {
+                    DataPropertyName = "id_group", // column name in schedule_week
+                    HeaderText = "Номер группы",
+                    DataSource = groupsTable,
+                    ValueMember = "id_group",
+                    DisplayMember = "short_number",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                };
+
+                // Add ComboBox columns to DataGridView
+                dataGridViewLessons.Columns.Add(subjectComboBox);
+                dataGridViewLessons.Columns.Add(teacherComboBox);
+                dataGridViewLessons.Columns.Add(groupComboBox);
+            }
         }
 
-      
+        private DataTable LoadDataTable(string query)
+        {
+            DataTable table = new DataTable();
+            try
+            {
+                using (MySqlDataAdapter adapter = new MySqlDataAdapter(query, connection))
+                {
+                    adapter.Fill(table);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading data: " + ex.Message);
+            }
+            return table;
+        }
 
         private void LessonsControl_Load(object sender, EventArgs e)
         {
-            
-            LoadEditComboBoxTeacher();
-            LoadEditComboBoxGroup();
-            LoadEditComboBoxSubject();
-            //MY_DB.ConnectionDB();
-            //LessonsControlClass.getLessons();
-            //dataGridViewLessons.DataSource = LessonsControlClass.dtLessons;
-            
-
-
+            dataGridViewLessons.CellEndEdit += dataGridViewLessons_CellEndEdit;
+            toolTip1.SetToolTip(button3, "Нажмите, чтобы синхронизировать данные");
+            toolTip4.SetToolTip(button1, "Нажмите, чтобы экспортировать данные в Excel-таблицу");
+            toolTip5.SetToolTip(VisiblebuttonDeleteLESS, "Нажмите, чтобы удалить данные");
         }
 
-        
-        
-
-        private void buttonAddLesson_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
-            AddLesson formadd = new AddLesson();
-            formadd.DataGridViewUpdated += UpdateDataGridViewOnMainForm;
-            formadd.Show();
-            
+            LoadData();
+            MessageBox.Show("База данных синхронизирована");
         }
 
-        private void UpdateDataGridViewOnMainForm()
+        private void dataGridViewLessons_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            // Обновляем DataGridView на основной форме
-            // Например:
-            //dataGridViewLessons.DataSource = LessonsControlClass.dtLessons;
+            try
+            {
+                dataAdapter.Update(dataTable);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
 
-        private void buttonEDITLESS_Click(object sender, EventArgs e)
-        {
-            //if (textBoxnumbweek.Text == EditNumb && textBoxEdittypeweek.Text == EditChet && textBoxEDITDAY.Text == EditDay && comboBoxEditsubject.Text ==  EditLesson && textBoxEditstarttime.Text == EditStart && textBoxeditendtime.Text == EditEnd && textBoxEDITCAB.Text == EditCabinet && comboBoxEDITGROUP.Text == EditGroup && comboBoxEDITEACH.Text == EditTeacher)
-            //{
-            //    if (textBoxnumbweek.Text != "" && textBoxEdittypeweek.Text != "" && textBoxEDITDAY.Text != "" && comboBoxEditsubject.Text != "" && textBoxEditstarttime.Text != "" && textBoxeditendtime.Text != "" && textBoxEDITCAB.Text != "" && comboBoxEDITGROUP.Text != "" && comboBoxEDITEACH.Text != "" )
-            //    {
-            //        string q1 = comboBoxEDITEACH.SelectedValue.ToString();
-            //        int id_teacher = int.Parse(q1);
-
-            //        string q2 = comboBoxEDITGROUP.SelectedValue.ToString();
-            //        int id_group = int.Parse(q2);
-
-            //        string q3 = comboBoxEditsubject.SelectedValue.ToString();
-            //        int id_subject= int.Parse(q3);
-
-            //        if (LessonsControlClass.EditLesson(int.Parse(Editid), textBoxnumbweek.Text, textBoxEdittypeweek.Text, textBoxEDITDAY.Text, id_subject, textBoxEditstarttime.Text, textBoxeditendtime.Text, textBoxEDITCAB.Text, id_group, id_teacher))
-            //        {
-            //            MessageBox.Show("Редактирование успешно", "Редактирование завершено", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            //            LessonsControlClass.getLessons();
-            //            textBoxnumbweek.Text = "";
-            //            textBoxEdittypeweek.Text = "";
-            //            textBoxEDITDAY.Text = "";
-            //            textBoxEditstarttime.Text = "";
-            //            textBoxeditendtime.Text = "";
-            //            textBoxEDITCAB.Text = "";
-            //        }
-            //        else
-            //        {
-            //            MessageBox.Show("Ошибка при редактировании записи");
-            //        }
-
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show("Заполните все поля", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    }
-            //}
-            //else
-            //{
-            //    string sql = @"SELECT id_lesson FROM schedule_week WHERE numb_week = '"+textBoxnumbweek.Text+"' AND chet_or_nechet = '"+textBoxEdittypeweek.Text+"' AND day_of_the_week = '"+textBoxEDITDAY.Text+"' AND id_subject = '"+comboBoxEditsubject.Text+"' AND start_time = '"+textBoxEditstarttime.Text+"' AND end_time = '"+textBoxeditendtime.Text+"' AND cabinet = '"+textBoxEDITCAB.Text+"' AND id_group = '"+comboBoxEDITGROUP.Text+"' AND id_teacher = '"+comboBoxEDITEACH.Text+"'";
-            //    MY_DB.msCommand.CommandText = sql;
-            //    Object result = MY_DB.msCommand.ExecuteScalar();
-            //    if (result == null)
-            //    {
-            //        if (textBoxnumbweek.Text != "" && textBoxEdittypeweek.Text != "" && textBoxEDITDAY.Text != "" && comboBoxEditsubject.Text != "" && textBoxEditstarttime.Text != "" && textBoxeditendtime.Text != "" && textBoxEDITCAB.Text != "" && comboBoxEDITGROUP.Text != "" && comboBoxEDITEACH.Text != "" )
-            //        {
-            //            string q1 = comboBoxEDITEACH.SelectedValue.ToString();
-            //            int id_teacher = int.Parse(q1);
-
-            //            string q2 = comboBoxEDITGROUP.SelectedValue.ToString();
-            //            int id_group = int.Parse(q2);
-
-            //            string q3 = comboBoxEditsubject.SelectedValue.ToString();
-            //            int id_subject = int.Parse(q3);
-
-            //            if (LessonsControlClass.EditLesson(int.Parse(Editid), textBoxnumbweek.Text, textBoxEdittypeweek.Text, textBoxEDITDAY.Text, id_subject, textBoxEditstarttime.Text, textBoxeditendtime.Text, textBoxEDITCAB.Text, id_group, id_teacher))
-            //            {
-            //                MessageBox.Show("Редактирование успешно", "Редактирование завершено", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            //                LessonsControlClass.getLessons();
-            //                textBoxnumbweek.Text = "";
-            //                textBoxEdittypeweek.Text = "";
-            //                textBoxEDITDAY.Text = "";
-            //                textBoxEditstarttime.Text = "";
-            //                textBoxeditendtime.Text = "";
-            //                textBoxEDITCAB.Text = "";
-            //            }
-            //            else
-            //            {
-            //                MessageBox.Show("Ошибка при редактировании записи");
-            //            }
-
-            //        }
-            //        else
-            //        {
-            //            MessageBox.Show("Заполните все поля", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //        }
-            //    }
-            //}
-        }
-
-      
-
-        private void buttonCANSELEDITLESS_Click(object sender, EventArgs e)
-        {
-            textBoxnumbweek.Text = "";
-            textBoxEdittypeweek.Text = "";
-            textBoxEDITDAY.Text = "";
-            textBoxEditstarttime.Text = "";
-            textBoxeditendtime.Text = "";
-            textBoxEDITCAB.Text = "";
-        }
-
-
-        static public string Editid, EditNumb, EditChet, EditDay, EditLesson, EditStart, EditEnd, EditCabinet, EditTeacher, EditGroup;
 
         private void textBoxSearch_TextChanged(object sender, EventArgs e)
         {
-            //try
-            //{
-            //    // Вызов метода для получения данных из вашего класса
-            //    LessonsControlClass.getLessons();
+            string searchText = textBoxSearch.Text.Trim();
 
-            //    // Создание DataView из DataTable вашего класса
-            //    DataView dv = new DataView(LessonsControlClass.dtLessons);
+            DataView dv = dataTable.DefaultView;
 
-            //    // Применение фильтра к DataView
-            //    dv.RowFilter = string.Format("numb_week LIKE '%{0}%' OR chet_or_nechet LIKE '%{0}%' OR day_of_the_week LIKE '%{0}%' OR name_of_the_subject LIKE '%{0}%' OR cabinet LIKE '%{0}%' OR fio LIKE '%{0}%' OR short_number LIKE '%{0}%'", textBoxSearch.Text);
+            if (string.IsNullOrEmpty(searchText))
+            {
+                // Сбрасываем фильтр, если строка поиска пуста
+                dv.RowFilter = string.Empty;
+            }
+            else
+            {
+                // Экранирование специальных символов для строки поиска
+                searchText = searchText.Replace("[", "[[]")
+                                       .Replace("%", "[%]")
+                                       .Replace("_", "[_]")
+                                       .Replace("'", "''");
 
-            //    // Установка нового источника данных для DataGridView
-            //    dataGridViewLessons.DataSource = dv;
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("Error: " + ex.Message);
-            //}
+                // Применяем фильтр для точного соответствия
+                dv.RowFilter = string.Format("numb_week = '{0}' OR chet_or_nechet = '{0}' OR day_of_the_week = '{0}' OR cabinet = '{0}'", searchText);
+            }
+
+            dataGridViewLessons.DataSource = dv;
         }
 
-        private void buttonEditVissibleLESS_Click(object sender, EventArgs e)
-        {
-            
-            Editid = dataGridViewLessons.CurrentRow.Cells[0].Value.ToString();
-            EditNumb = dataGridViewLessons.CurrentRow.Cells[1].Value.ToString();
-            EditChet = dataGridViewLessons.CurrentRow.Cells[2].Value.ToString();
-            EditDay = dataGridViewLessons.CurrentRow.Cells[3].Value.ToString();
-            EditLesson = dataGridViewLessons.CurrentRow.Cells[4].Value.ToString();
-            EditStart = dataGridViewLessons.CurrentRow.Cells[5].Value.ToString();
-            EditEnd = dataGridViewLessons.CurrentRow.Cells[6].Value.ToString();
-            EditCabinet = dataGridViewLessons.CurrentRow.Cells[7].Value.ToString();
-            EditGroup = dataGridViewLessons.CurrentRow.Cells[8].Value.ToString();
-            EditTeacher = dataGridViewLessons.CurrentRow.Cells[9].Value.ToString();
-
-            textBoxnumbweek.Text = dataGridViewLessons.CurrentRow.Cells[1].Value.ToString();
-            textBoxEdittypeweek.Text = dataGridViewLessons.CurrentRow.Cells[2].Value.ToString();
-            textBoxEDITDAY.Text = dataGridViewLessons.CurrentRow.Cells[3].Value.ToString();
-            comboBoxEditsubject.Text = dataGridViewLessons.CurrentRow.Cells[4].Value.ToString();
-            textBoxEditstarttime.Text = dataGridViewLessons.CurrentRow.Cells[5].Value.ToString();
-            textBoxeditendtime.Text = dataGridViewLessons.CurrentRow.Cells[6].Value.ToString();
-            textBoxEDITCAB.Text = dataGridViewLessons.CurrentRow.Cells[7].Value.ToString();
-            comboBoxEDITGROUP.Text = dataGridViewLessons.CurrentRow.Cells[8].Value.ToString();
-            comboBoxEDITEACH.Text = dataGridViewLessons.CurrentRow.Cells[9].Value.ToString();
-            
-        }
+        
 
         private void VisiblebuttonDeleteLESS_Click(object sender, EventArgs e)
         {
-            //try
-            //{
-            //    string select = dataGridViewLessons.CurrentRow.Cells[0].Value.ToString();
-            //    DialogResult del = MessageBox.Show("Вы действительно хотите удалить запись?", "Подтверждение удаления", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            //    if (del == DialogResult.Yes)
-            //    {
-            //        string sql = @"SELECT id_lesson FROM semester WHERE id_lesson = '"+select+"'";
-            //        MY_DB.msCommand.CommandText= sql;
-            //        Object result = MY_DB.msCommand.ExecuteScalar();
-            //        if (result != null)
-            //        {
-            //            MessageBox.Show("В таблице 'Семестр' данная запись используется", "Удаление невозможно");
-            //        }
-            //        else
-            //        {
-            //            LessonsControlClass.DeleteLesson(select);
-            //            LessonsControlClass.getLessons();
-            //            dataGridViewLessons.DataSource = LessonsControlClass.dtLessons;
-            //            MessageBox.Show("Пара удалена", "Успешно", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //        }    
-            //    }
-            //}
-            //catch
-            //{
-            //    MessageBox.Show("Ошибка при удалении");
-            //}
+            if (dataGridViewLessons.SelectedRows.Count > 0)
+            {
+                if (MessageBox.Show("Вы уверены, что хотите удалить выбранную пару?", "Подтверждение удаления", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    DataGridViewRow selectedRow = dataGridViewLessons.SelectedRows[0];
+                    int rowIndex = selectedRow.Index;
+                    DataRowView selectedRowView = selectedRow.DataBoundItem as DataRowView;
+                    DataRow selectedRowData = selectedRowView.Row;
+                    int id_lesson = Convert.ToInt32(selectedRowData["id_lesson"]);
+
+                    // Проверяем, используется ли учитель в таблице Расписание
+                    string checkQuery = "SELECT COUNT(*) FROM semester WHERE id_lesson = @id_lesson";
+                    MySqlCommand checkCmd = new MySqlCommand(checkQuery, connection);
+                    checkCmd.Parameters.AddWithValue("@id_lesson", id_lesson);
+
+                    try
+                    {
+                        connection.Open();
+                        int count = Convert.ToInt32(checkCmd.ExecuteScalar());
+                        if (count > 0)
+                        {
+                            MessageBox.Show("Нельзя удалить пару, так как она используется в таблице 'Семестр'.");
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Ошибка при проверке использования пары: " + ex.Message);
+                        return;
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+
+
+                    selectedRowData.Delete();
+
+                    try
+                    {
+                        dataAdapter.Update(dataTable);
+                        MessageBox.Show("Запись успешно удалена.");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Ошибка удаления записи: " + ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Пожалуйста, выберите запись для удаления.");
+            }
+        }
+
+        private void dataGridViewLessons_RowValidated(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                dataAdapter.Update(dataTable);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
     }
 }

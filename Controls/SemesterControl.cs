@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf.Reflection;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,207 +16,241 @@ namespace ScheduleForStudents.Controls
 {
     public partial class SemesterControl : UserControl
     {
+        private MySqlConnection connection;
+        private MySqlDataAdapter dataAdapter;
+        private DataTable dataTable;
+
         public SemesterControl()
         {
             InitializeComponent();
-            toolTip1.SetToolTip(buttonEDITSem, "Нажмите, чтобы сохранить изменения");
-            toolTip2.SetToolTip(buttonCANSELEDITSem, "Нажмите, чтобы очистить изменения в полях");
-            toolTip3.SetToolTip(buttonEditVissibleSemestr, "Нажмите, чтобы ввести изменения в таблицу");
-            toolTip4.SetToolTip(button1, "Нажмите, чтобы экспортировать данные в Excel-таблицу");
-            toolTip5.SetToolTip(VisiblebuttonDeleteSemestr, "Нажмите, чтобы удалить данные");
-            toolTip6.SetToolTip(buttonAddSemester, "Нажмите, чтобы добавить данные в таблицу");
+            InitializeDBConnection();
+            LoadSemester();
         }
 
         private void SemesterControl_Load(object sender, EventArgs e)
         {
-            //MY_DB.ConnectionDB();
-            //SemesterControlClass.getSemestrs();
-            //dataGridViewSemester.DataSource = SemesterControlClass.dtSemestrs;
-            LoadComboBoxEditLesson();
-            LoadComboBoxEditGroup();
+            dataGridViewSemester.CellEndEdit += dataGridViewSemester_CellEndEdit;
+            toolTip1.SetToolTip(button3, "Нажмите, чтобы синхронизировать данные");
+            toolTip4.SetToolTip(button1, "Нажмите, чтобы экспортировать данные в Excel-таблицу");
+            toolTip5.SetToolTip(VisiblebuttonDeleteSemestr, "Нажмите, чтобы удалить данные");
         }
 
-        private void buttonAddSemester_Click(object sender, EventArgs e)
+        private void InitializeDBConnection()
         {
-            SemestrAdd formadd = new SemestrAdd();
-            formadd.DataGridViewUpdated += UpdateDataGridViewOnMainForm;
-            formadd.Show();
+            DBManager dbManager = new DBManager();
+            connection = dbManager.GetConnection();
+            dataAdapter = new MySqlDataAdapter();
         }
 
-        private void UpdateDataGridViewOnMainForm()
+        private void LoadData()
         {
-            // Обновляем DataGridView на основной форме
-            // Например:
-            //dataGridViewSemester.DataSource = SemesterControlClass.dtSemestrs;
+            string query = "SELECT * FROM semester";
+            dataAdapter = new MySqlDataAdapter(query, connection);
+            MySqlCommandBuilder commandBuilder = new MySqlCommandBuilder(dataAdapter);
+            dataTable = new DataTable();
+            try
+            {
+                connection.Open();
+                dataAdapter.Fill(dataTable);
+                dataGridViewSemester.DataSource = dataTable;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        private void LoadSemester()
+        {
+            string query = "SELECT * FROM semester";
+            dataAdapter = new MySqlDataAdapter(query, connection);
+            MySqlCommandBuilder commandBuilder = new MySqlCommandBuilder(dataAdapter);
+            dataTable = new DataTable();
+
+            try
+            {
+                connection.Open();
+                dataAdapter.Fill(dataTable);
+                dataGridViewSemester.DataSource = dataTable;
+                AddComboBoxColumns();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        private void AddComboBoxColumns()
+        {
+
+
+            if (dataGridViewSemester.Columns["Subject"] == null)
+            {
+                // Load data for ComboBoxes
+                DataTable weekTable = LoadDataTable("SELECT id_lesson, numb_week FROM schedule_week");
+                DataTable groupsTable = LoadDataTable("SELECT id_group, short_number FROM students_groups");
+
+                // Create and configure Subject ComboBox column
+                DataGridViewComboBoxColumn weekComboBox = new DataGridViewComboBoxColumn
+                {
+                    DataPropertyName = "id_lesson", // column name in schedule_week
+                    HeaderText = "Номер недели",
+                    DataSource = weekTable,
+                    ValueMember = "id_lesson",
+                    DisplayMember = "numb_week",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                };
+
+
+                DataGridViewComboBoxColumn groupComboBox = new DataGridViewComboBoxColumn
+                {
+                    DataPropertyName = "id_group", // column name in schedule_week
+                    HeaderText = "Номер группы",
+                    DataSource = groupsTable,
+                    ValueMember = "id_group",
+                    DisplayMember = "short_number",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                };
+
+                // Add ComboBox columns to DataGridView
+                dataGridViewSemester.Columns.Add(weekComboBox);
+                dataGridViewSemester.Columns.Add(groupComboBox);
+            }
+        }
+
+        private DataTable LoadDataTable(string query)
+        {
+            DataTable table = new DataTable();
+            try
+            {
+                using (MySqlDataAdapter adapter = new MySqlDataAdapter(query, connection))
+                {
+                    adapter.Fill(table);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading data: " + ex.Message);
+            }
+            return table;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             Excel.Application exApp = new Excel.Application();
-
             exApp.Workbooks.Add();
             Excel.Worksheet wsh = (Excel.Worksheet)exApp.ActiveSheet;
+
             int i, j;
-            for (i = 0; i <= dataGridViewSemester.RowCount - 1; i++)
+            for (i = 0; i <=  dataGridViewSemester.RowCount - 1; i++)
             {
-                for (j = 0; j <= dataGridViewSemester.ColumnCount - 1; j++)
+                for (j = 0; j <=  dataGridViewSemester.ColumnCount - 1; j++)
                 {
-                    wsh.Cells[i + 1, j + 1] = dataGridViewSemester[j, i].Value.ToString();
+                    object cellValue = dataGridViewSemester[j, i].Value;
+                    wsh.Cells[i + 1, j + 1] = cellValue != null ? cellValue.ToString() : ""; // Проверяем на null перед вызовом ToString()
                 }
             }
-
-
 
             exApp.Visible = true;
         }
 
-        private void LoadComboBoxEditLesson()
-        {
-            //LessonsControlClass.getLessons();
-
-            //comboBoxEditLesson.DataSource = LessonsControlClass.dtLessons;
-            //comboBoxEditLesson.DisplayMember = "numb_week";
-            //comboBoxEditLesson.ValueMember = "id_lesson";
-        }
-
-        private void LoadComboBoxEditGroup()
-        {
-            //GroupsControlCLass.getGroups();
-
-            //comboBoxEditGroup.DataSource = GroupsControlCLass.dtGroups;
-            //comboBoxEditGroup.DisplayMember = "short_number";
-            //comboBoxEditGroup.ValueMember = "id_group";
-        }
-        static public string Editid, EditNumbSem, EditYear, EditIdGroup, EditIdLesson;
 
         private void VisiblebuttonDeleteSemestr_Click(object sender, EventArgs e)
         {
-            //try
-            //{
-            //    string select = dataGridViewSemester.CurrentRow.Cells[0].Value.ToString();
-            //    DialogResult del = MessageBox.Show("Вы действительно хотите удалить запись?", "Подтверждение удаления", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            //    if (del == DialogResult.Yes)
-            //    {
-            //        SemesterControlClass.DeleteSemester(select);
-            //        SemesterControlClass.getSemestrs();
-            //        dataGridViewSemester.DataSource = SemesterControlClass.dtSemestrs;
-            //        MessageBox.Show("Пара удалена", "Успешно", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //    }
-            //}
-            //catch
-            //{
-            //    MessageBox.Show("Ошибка при удалении");
-            //}
+            if (dataGridViewSemester.SelectedRows.Count > 0)
+            {
+                if (MessageBox.Show("Вы уверены, что хотите удалить выбранный семестр?", "Подтверждение удаления", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    DataGridViewRow selectedRow = dataGridViewSemester.SelectedRows[0];
+                    int rowIndex = selectedRow.Index;
+                    DataRowView selectedRowView = selectedRow.DataBoundItem as DataRowView;
+                    DataRow selectedRowData = selectedRowView.Row;
+
+
+                    selectedRowData.Delete();
+
+                    try
+                    {
+                        dataAdapter.Update(dataTable);
+                        MessageBox.Show("Запись успешно удалена.");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Ошибка удаления записи: " + ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Пожалуйста, выберите запись для удаления.");
+            }
         }
 
-        private void buttonEditVissibleSemestr_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
-            Editid = dataGridViewSemester.CurrentRow.Cells[0].Value.ToString();
-            EditNumbSem = dataGridViewSemester.CurrentRow.Cells[1].Value.ToString();
-            EditYear = dataGridViewSemester.CurrentRow.Cells[2].Value.ToString();
-            EditIdGroup = dataGridViewSemester.CurrentRow.Cells[3].Value.ToString();
-            EditIdLesson = dataGridViewSemester.CurrentRow.Cells[4].Value.ToString();
-
-            textBoxNumbSemest.Text = dataGridViewSemester.CurrentRow.Cells[1].Value.ToString();
-            textBoxYearSemest.Text = dataGridViewSemester.CurrentRow.Cells[2].Value.ToString();
-            comboBoxEditGroup.Text = dataGridViewSemester.CurrentRow.Cells[3].Value.ToString();
-            comboBoxEditLesson.Text = dataGridViewSemester.CurrentRow.Cells[4].Value.ToString();
-            
+            LoadData();
+            MessageBox.Show("База данных синхронизирована");
         }
+
 
         private void textBoxSearch_TextChanged(object sender, EventArgs e)
         {
-            //try
-            //{
-            //    // Вызов метода для получения данных из вашего класса
-            //    SemesterControlClass.getSemestrs();
+            string searchText = textBoxSearch.Text.Trim();
 
-            //    // Создание DataView из DataTable вашего класса
-            //    DataView dv = new DataView(SemesterControlClass.dtSemestrs);
+            DataView dv = dataTable.DefaultView;
 
-            //    // Применение фильтра к DataView
-            //    dv.RowFilter = string.Format("semester_number LIKE '%{0}%' OR year LIKE '%{0}%' OR numb_week LIKE '%{0}%' OR short_number LIKE '%{0}%'", textBoxSearch.Text);
+            if (string.IsNullOrEmpty(searchText))
+            {
+                // Сбрасываем фильтр, если строка поиска пуста
+                dv.RowFilter = string.Empty;
+            }
+            else
+            {
+                // Экранирование специальных символов для строки поиска
+                searchText = searchText.Replace("[", "[[]")
+                                       .Replace("%", "[%]")
+                                       .Replace("_", "[_]")
+                                       .Replace("'", "''");
 
-            //    // Установка нового источника данных для DataGridView
-            //    dataGridViewSemester.DataSource = dv;
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("Error: " + ex.Message);
-            //}
+                // Применяем фильтр для точного соответствия
+                dv.RowFilter = string.Format("semester_number = '{0}' OR year = '{0}'", searchText);
+            }
+
+            dataGridViewSemester.DataSource = dv;
         }
 
-        private void buttonCANSELEDITSem_Click(object sender, EventArgs e)
+        private void dataGridViewSemester_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            textBoxNumbSemest.Text = "";
-            textBoxYearSemest.Text = "";
+            try
+            {
+                dataAdapter.Update(dataTable);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
 
-        private void buttonEDITSem_Click(object sender, EventArgs e)
+        private void dataGridViewSemester_RowValidated(object sender, DataGridViewCellEventArgs e)
         {
-            //if (textBoxNumbSemest.Text == EditNumbSem && textBoxYearSemest.Text == EditYear && comboBoxEditGroup.Text == EditIdGroup && comboBoxEditLesson.Text ==  EditIdLesson)
-            //{
-            //    if (textBoxNumbSemest.Text != "" && textBoxYearSemest.Text != "" && comboBoxEditGroup.Text != "" && comboBoxEditLesson.Text != "")
-            //    {
-            //        string q1 = comboBoxEditLesson.SelectedValue.ToString();
-            //        int id_lesson = int.Parse(q1);
+            try
+            {
+                dataAdapter.Update(dataTable);
 
-            //        string q2 = comboBoxEditGroup.SelectedValue.ToString();
-            //        int id_group = int.Parse(q2);
-
-
-            //        if (SemesterControlClass.EditSemester(int.Parse(Editid), textBoxNumbSemest.Text, textBoxYearSemest.Text, id_group, id_lesson))
-            //        {
-            //            MessageBox.Show("Редактирование успешно", "Редактирование завершено", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            //            SemesterControlClass.getSemestrs();
-            //            textBoxNumbSemest.Text = "";
-            //            textBoxYearSemest.Text = "";
-            //        }
-            //        else
-            //        {
-            //            MessageBox.Show("Ошибка при редактировании записи");
-            //        }
-
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show("Заполните все поля", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    }
-            //}
-            //else
-            //{
-            //    string sql = @"SELECT id_semester FROM semester WHERE semester_number = '"+textBoxNumbSemest.Text+"' AND year = '"+textBoxYearSemest.Text+"' AND id_group = '"+comboBoxEditGroup.Text+"' AND id_lesson = '"+comboBoxEditLesson.Text+"'";
-            //    //MY_DB.msCommand.CommandText = sql;
-            //    //Object result = MY_DB.msCommand.ExecuteScalar();
-            //    //if (result == null)
-            //    //{
-            //    //    if (textBoxNumbSemest.Text != "" && textBoxYearSemest.Text != "" && comboBoxEditGroup.Text != "" && comboBoxEditLesson.Text != "")
-            //    //    {
-            //    //        string q1 = comboBoxEditLesson.SelectedValue.ToString();
-            //    //        int id_lesson = int.Parse(q1);
-
-            //    //        string q2 = comboBoxEditGroup.SelectedValue.ToString();
-            //    //        int id_group = int.Parse(q2);
-
-            //    //        if (SemesterControlClass.EditSemester(int.Parse(Editid), textBoxNumbSemest.Text, textBoxYearSemest.Text, id_group, id_lesson))
-            //    //        {
-            //    //            MessageBox.Show("Редактирование успешно", "Редактирование завершено", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            //    //            SemesterControlClass.getSemestrs();
-            //    //            textBoxNumbSemest.Text = "";
-            //    //            textBoxYearSemest.Text = "";
-            //    //        }
-            //    //        else
-            //    //        {
-            //    //            MessageBox.Show("Ошибка при редактировании записи");
-            //    //        }
-
-            //    //    }
-            //    //    else
-            //    //    {
-            //    //        MessageBox.Show("Заполните все поля", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    //    }
-            //    //}
-            //}
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
     }
 }

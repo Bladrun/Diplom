@@ -128,12 +128,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddLesson.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AddLesson.Designer.cs">
-      <DependentUpon>AddLesson.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\GroupsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -190,9 +184,6 @@
     <Compile Include="SemestrAdd.Designer.cs">
       <DependentUpon>SemestrAdd.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AddLesson.resx">
-      <DependentUpon>AddLesson.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\GroupsControl.resx">
       <DependentUpon>GroupsControl.cs</DependentUpon>
     </EmbeddedResource>

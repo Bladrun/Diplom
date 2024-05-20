@@ -30,6 +30,7 @@ namespace ScheduleForStudents.Controls
 
         private void SubjectsControl_Load(object sender, EventArgs e)
         {
+            dataGridViewSubjects.CellEndEdit += dataGridViewSubjects_CellEndEdit;
             toolTip1.SetToolTip(button1, "Нажмите, чтобы синхронизировать данные");
             toolTip5.SetToolTip(button3, "Нажмите, чтобы экспортировать данные в Excel-таблицу");
             toolTip6.SetToolTip(VisiblebuttonDeleteSubject, "Нажмите, чтобы удалить данные");
@@ -69,7 +70,24 @@ namespace ScheduleForStudents.Controls
             string searchText = textBoxSearch.Text.Trim();
 
             DataView dv = dataTable.DefaultView;
-            dv.RowFilter = string.Format("name_of_the_subject LIKE '%{0}%'", searchText);
+
+            if (string.IsNullOrEmpty(searchText))
+            {
+                // Сбрасываем фильтр, если строка поиска пуста
+                dv.RowFilter = string.Empty;
+            }
+            else
+            {
+                // Экранирование специальных символов для строки поиска
+                searchText = searchText.Replace("[", "[[]")
+                                       .Replace("%", "[%]")
+                                       .Replace("_", "[_]")
+                                       .Replace("'", "''");
+
+                // Применяем фильтр для точного соответствия
+                dv.RowFilter = string.Format("name_of_the_subject = '{0}'", searchText);
+            }
+
             dataGridViewSubjects.DataSource = dv;
         }
 
@@ -108,6 +126,7 @@ namespace ScheduleForStudents.Controls
         private void button1_Click(object sender, EventArgs e)
         {
             LoadSubjects();
+            MessageBox.Show("База данных синхронизирована");
         }
 
         private void dataGridViewSubjects_RowValidated(object sender, DataGridViewCellEventArgs e)
