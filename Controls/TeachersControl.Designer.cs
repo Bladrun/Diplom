@@ -227,6 +227,7 @@
             this.does_work_or_not.DataPropertyName = "does_work_or_not";
             this.does_work_or_not.HeaderText = "Статус работы";
             this.does_work_or_not.Name = "does_work_or_not";
+            this.does_work_or_not.Visible = false;
             // 
             // TeachersControl
             // 

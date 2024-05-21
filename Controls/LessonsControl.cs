@@ -13,6 +13,7 @@ using Microsoft.Office.Interop.Excel;
 using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Utilities;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using ComboBox = System.Windows.Forms.ComboBox;
 using DataTable = System.Data.DataTable;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -106,13 +107,11 @@ namespace ScheduleForStudents.Controls
 
         private void AddComboBoxColumns()
         {
-            
-
             if (dataGridViewLessons.Columns["Subject"] == null)
             {
                 // Load data for ComboBoxes
                 DataTable subjectsTable = LoadDataTable("SELECT id_subject, name_of_the_subject FROM subjects");
-                DataTable teachersTable = LoadDataTable("SELECT id_teacher, fio FROM teacher");
+                DataTable teachersTable = LoadDataTable("SELECT id_teacher, fio, does_work_or_not FROM teacher");
                 DataTable groupsTable = LoadDataTable("SELECT id_group, short_number FROM students_groups");
 
                 // Create and configure Subject ComboBox column
@@ -130,12 +129,15 @@ namespace ScheduleForStudents.Controls
                 DataGridViewComboBoxColumn teacherComboBox = new DataGridViewComboBoxColumn
                 {
                     DataPropertyName = "id_teacher", // column name in schedule_week
-                    HeaderText = "Преподавателя",
+                    HeaderText = "Преподаватель",
                     DataSource = teachersTable,
                     ValueMember = "id_teacher",
                     DisplayMember = "fio",
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                 };
+
+                // Handle the drawing of the ComboBox items and selection change
+                dataGridViewLessons.EditingControlShowing += dataGridViewLessons_EditingControlShowing;
 
                 DataGridViewComboBoxColumn groupComboBox = new DataGridViewComboBoxColumn
                 {
@@ -154,20 +156,58 @@ namespace ScheduleForStudents.Controls
             }
         }
 
+        private void ComboBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            ComboBox comboBox = (ComboBox)sender;
+            DataRowView row = (DataRowView)comboBox.Items[e.Index];
+            string teacherName = row["fio"].ToString();
+            bool isActive = Convert.ToBoolean(row["does_work_or_not"]);
+
+            e.DrawBackground();
+
+            // If teacher is inactive, draw in gray
+            if (!isActive)
+            {
+                e.Graphics.DrawString(teacherName, e.Font, Brushes.Gray, e.Bounds);
+            }
+            else
+            {
+                e.Graphics.DrawString(teacherName, e.Font, Brushes.Black, e.Bounds);
+            }
+
+            e.DrawFocusRectangle();
+        }
+
+        private void ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+            if (comboBox.SelectedItem is DataRowView selectedRow)
+            {
+                bool isActive = Convert.ToBoolean(selectedRow["does_work_or_not"]);
+                if (!isActive)
+                {
+                    MessageBox.Show("Этот преподаватель не работает и не может быть выбран.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    comboBox.SelectedIndex = -1; // Сбрасываем выбор
+                }
+            }
+        }
+
         private DataTable LoadDataTable(string query)
         {
             DataTable table = new DataTable();
-            try
-            {
+             try
+             {
                 using (MySqlDataAdapter adapter = new MySqlDataAdapter(query, connection))
                 {
                     adapter.Fill(table);
                 }
-            }
+             }
             catch (Exception ex)
-            {
+             {
                 MessageBox.Show("Error loading data: " + ex.Message);
-            }
+             }
             return table;
         }
 
@@ -294,6 +334,18 @@ namespace ScheduleForStudents.Controls
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void dataGridViewLessons_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (e.Control is ComboBox cb && dataGridViewLessons.CurrentCell.OwningColumn is DataGridViewComboBoxColumn)
+            {
+                cb.DrawMode = DrawMode.OwnerDrawFixed;
+                cb.DrawItem -= ComboBox_DrawItem;
+                cb.DrawItem += ComboBox_DrawItem;
+                cb.SelectedIndexChanged -= ComboBox_SelectedIndexChanged;
+                cb.SelectedIndexChanged += ComboBox_SelectedIndexChanged;
             }
         }
     }

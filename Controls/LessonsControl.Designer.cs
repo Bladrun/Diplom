@@ -34,15 +34,6 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.dataGridViewLessons = new System.Windows.Forms.DataGridView();
-            this.textBoxSearch = new System.Windows.Forms.TextBox();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.VisiblebuttonDeleteLESS = new System.Windows.Forms.Button();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.toolTip4 = new System.Windows.Forms.ToolTip(this.components);
-            this.toolTip5 = new System.Windows.Forms.ToolTip(this.components);
             this.id_lesson = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.numb_week = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.chet_or_nechet = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -53,6 +44,15 @@
             this.cabinet = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.id_group = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.id_teacher = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.textBoxSearch = new System.Windows.Forms.TextBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.VisiblebuttonDeleteLESS = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.toolTip4 = new System.Windows.Forms.ToolTip(this.components);
+            this.toolTip5 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLessons)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
@@ -122,7 +122,82 @@
             this.dataGridViewLessons.Size = new System.Drawing.Size(1661, 693);
             this.dataGridViewLessons.TabIndex = 8;
             this.dataGridViewLessons.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewLessons_CellEndEdit);
+            this.dataGridViewLessons.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridViewLessons_EditingControlShowing);
             this.dataGridViewLessons.RowValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewLessons_RowValidated);
+            // 
+            // id_lesson
+            // 
+            this.id_lesson.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.id_lesson.DataPropertyName = "id_lesson";
+            this.id_lesson.HeaderText = "id_lesson";
+            this.id_lesson.Name = "id_lesson";
+            this.id_lesson.Visible = false;
+            // 
+            // numb_week
+            // 
+            this.numb_week.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.numb_week.DataPropertyName = "numb_week";
+            this.numb_week.HeaderText = "Номер недели";
+            this.numb_week.Name = "numb_week";
+            // 
+            // chet_or_nechet
+            // 
+            this.chet_or_nechet.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.chet_or_nechet.DataPropertyName = "chet_or_nechet";
+            this.chet_or_nechet.HeaderText = "Четная/Нечетная";
+            this.chet_or_nechet.Name = "chet_or_nechet";
+            // 
+            // day_of_the_week
+            // 
+            this.day_of_the_week.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.day_of_the_week.DataPropertyName = "day_of_the_week";
+            this.day_of_the_week.HeaderText = "День недели";
+            this.day_of_the_week.Name = "day_of_the_week";
+            // 
+            // id_subject
+            // 
+            this.id_subject.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.id_subject.DataPropertyName = "id_subject";
+            this.id_subject.HeaderText = "id_subject";
+            this.id_subject.Name = "id_subject";
+            this.id_subject.Visible = false;
+            // 
+            // start_time
+            // 
+            this.start_time.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.start_time.DataPropertyName = "start_time";
+            this.start_time.HeaderText = "Время начала";
+            this.start_time.Name = "start_time";
+            // 
+            // end_time
+            // 
+            this.end_time.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.end_time.DataPropertyName = "end_time";
+            this.end_time.HeaderText = "Время окончания";
+            this.end_time.Name = "end_time";
+            // 
+            // cabinet
+            // 
+            this.cabinet.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.cabinet.DataPropertyName = "cabinet";
+            this.cabinet.HeaderText = "Аудитория";
+            this.cabinet.Name = "cabinet";
+            // 
+            // id_group
+            // 
+            this.id_group.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.id_group.DataPropertyName = "id_group";
+            this.id_group.HeaderText = "id_group";
+            this.id_group.Name = "id_group";
+            this.id_group.Visible = false;
+            // 
+            // id_teacher
+            // 
+            this.id_teacher.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.id_teacher.DataPropertyName = "id_teacher";
+            this.id_teacher.HeaderText = "id_teacher";
+            this.id_teacher.Name = "id_teacher";
+            this.id_teacher.Visible = false;
             // 
             // textBoxSearch
             // 
@@ -219,80 +294,6 @@
             this.VisiblebuttonDeleteLESS.TabIndex = 21;
             this.VisiblebuttonDeleteLESS.UseVisualStyleBackColor = false;
             this.VisiblebuttonDeleteLESS.Click += new System.EventHandler(this.VisiblebuttonDeleteLESS_Click);
-            // 
-            // id_lesson
-            // 
-            this.id_lesson.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.id_lesson.DataPropertyName = "id_lesson";
-            this.id_lesson.HeaderText = "id_lesson";
-            this.id_lesson.Name = "id_lesson";
-            this.id_lesson.Visible = false;
-            // 
-            // numb_week
-            // 
-            this.numb_week.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.numb_week.DataPropertyName = "numb_week";
-            this.numb_week.HeaderText = "Номер недели";
-            this.numb_week.Name = "numb_week";
-            // 
-            // chet_or_nechet
-            // 
-            this.chet_or_nechet.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.chet_or_nechet.DataPropertyName = "chet_or_nechet";
-            this.chet_or_nechet.HeaderText = "Четная/Нечетная";
-            this.chet_or_nechet.Name = "chet_or_nechet";
-            // 
-            // day_of_the_week
-            // 
-            this.day_of_the_week.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.day_of_the_week.DataPropertyName = "day_of_the_week";
-            this.day_of_the_week.HeaderText = "День недели";
-            this.day_of_the_week.Name = "day_of_the_week";
-            // 
-            // id_subject
-            // 
-            this.id_subject.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.id_subject.DataPropertyName = "id_subject";
-            this.id_subject.HeaderText = "id_subject";
-            this.id_subject.Name = "id_subject";
-            this.id_subject.Visible = false;
-            // 
-            // start_time
-            // 
-            this.start_time.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.start_time.DataPropertyName = "start_time";
-            this.start_time.HeaderText = "Время начала";
-            this.start_time.Name = "start_time";
-            // 
-            // end_time
-            // 
-            this.end_time.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.end_time.DataPropertyName = "end_time";
-            this.end_time.HeaderText = "Время окончания";
-            this.end_time.Name = "end_time";
-            // 
-            // cabinet
-            // 
-            this.cabinet.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.cabinet.DataPropertyName = "cabinet";
-            this.cabinet.HeaderText = "Аудитория";
-            this.cabinet.Name = "cabinet";
-            // 
-            // id_group
-            // 
-            this.id_group.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.id_group.DataPropertyName = "id_group";
-            this.id_group.HeaderText = "id_group";
-            this.id_group.Name = "id_group";
-            this.id_group.Visible = false;
-            // 
-            // id_teacher
-            // 
-            this.id_teacher.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.id_teacher.DataPropertyName = "id_teacher";
-            this.id_teacher.HeaderText = "id_teacher";
-            this.id_teacher.Name = "id_teacher";
-            this.id_teacher.Visible = false;
             // 
             // LessonsControl
             // 
