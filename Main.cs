@@ -83,6 +83,10 @@ namespace ScheduleForStudents
             showControl(dc);
         }
 
-        
+        private void button7_Click(object sender, EventArgs e)
+        {
+            CabinetControl dc = new CabinetControl();
+            showControl(dc);
+        }
     }
 }

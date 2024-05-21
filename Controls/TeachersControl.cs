@@ -45,7 +45,7 @@ namespace ScheduleForStudents.Controls
                 connection.Open();
                 dataAdapter.Fill(dataTable);
                 dataGridViewTeachers.DataSource = dataTable;
-                //AddComboBoxColumns();
+                
             }
             catch (Exception ex)
             {

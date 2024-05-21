@@ -25,6 +25,7 @@ namespace ScheduleForStudents.Controls
         private MySqlDataAdapter dataAdapter;
         private DataTable dataTable;
 
+
         public LessonsControl()
         {
             InitializeComponent();
@@ -113,6 +114,7 @@ namespace ScheduleForStudents.Controls
                 DataTable subjectsTable = LoadDataTable("SELECT id_subject, name_of_the_subject FROM subjects");
                 DataTable teachersTable = LoadDataTable("SELECT id_teacher, fio, does_work_or_not FROM teacher");
                 DataTable groupsTable = LoadDataTable("SELECT id_group, short_number FROM students_groups");
+                DataTable roomsTable = LoadDataTable("SELECT id_cabinet, numb_cab FROM cabinet");
 
                 // Create and configure Subject ComboBox column
                 DataGridViewComboBoxColumn subjectComboBox = new DataGridViewComboBoxColumn
@@ -149,50 +151,25 @@ namespace ScheduleForStudents.Controls
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                 };
 
+                DataGridViewComboBoxColumn roomComboBox = new DataGridViewComboBoxColumn
+                {
+                    DataPropertyName = "id_cabinet", // column name in schedule_week
+                    HeaderText = "Кабинет",
+                    DataSource = roomsTable,
+                    ValueMember = "id_cabinet",
+                    DisplayMember = "numb_cab",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                };
+
                 // Add ComboBox columns to DataGridView
                 dataGridViewLessons.Columns.Add(subjectComboBox);
                 dataGridViewLessons.Columns.Add(teacherComboBox);
                 dataGridViewLessons.Columns.Add(groupComboBox);
+                dataGridViewLessons.Columns.Add(roomComboBox);
             }
         }
 
-        private void ComboBox_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            if (e.Index < 0) return;
 
-            ComboBox comboBox = (ComboBox)sender;
-            DataRowView row = (DataRowView)comboBox.Items[e.Index];
-            string teacherName = row["fio"].ToString();
-            bool isActive = Convert.ToBoolean(row["does_work_or_not"]);
-
-            e.DrawBackground();
-
-            // If teacher is inactive, draw in gray
-            if (!isActive)
-            {
-                e.Graphics.DrawString(teacherName, e.Font, Brushes.Gray, e.Bounds);
-            }
-            else
-            {
-                e.Graphics.DrawString(teacherName, e.Font, Brushes.Black, e.Bounds);
-            }
-
-            e.DrawFocusRectangle();
-        }
-
-        private void ComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ComboBox comboBox = (ComboBox)sender;
-            if (comboBox.SelectedItem is DataRowView selectedRow)
-            {
-                bool isActive = Convert.ToBoolean(selectedRow["does_work_or_not"]);
-                if (!isActive)
-                {
-                    MessageBox.Show("Этот преподаватель не работает и не может быть выбран.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    comboBox.SelectedIndex = -1; // Сбрасываем выбор
-                }
-            }
-        }
 
         private DataTable LoadDataTable(string query)
         {
@@ -213,7 +190,7 @@ namespace ScheduleForStudents.Controls
 
         private void LessonsControl_Load(object sender, EventArgs e)
         {
-            dataGridViewLessons.CellEndEdit += dataGridViewLessons_CellEndEdit;
+            dataGridViewLessons.CellEndEdit += new DataGridViewCellEventHandler(dataGridViewLessons_CellEndEdit);
             toolTip1.SetToolTip(button3, "Нажмите, чтобы синхронизировать данные");
             toolTip4.SetToolTip(button1, "Нажмите, чтобы экспортировать данные в Excel-таблицу");
             toolTip5.SetToolTip(VisiblebuttonDeleteLESS, "Нажмите, чтобы удалить данные");
@@ -225,18 +202,7 @@ namespace ScheduleForStudents.Controls
             MessageBox.Show("База данных синхронизирована");
         }
 
-        private void dataGridViewLessons_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            try
-            {
-                dataAdapter.Update(dataTable);
 
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-        }
 
 
         private void textBoxSearch_TextChanged(object sender, EventArgs e)
@@ -259,7 +225,7 @@ namespace ScheduleForStudents.Controls
                                        .Replace("'", "''");
 
                 // Применяем фильтр для точного соответствия
-                dv.RowFilter = string.Format("numb_week = '{0}' OR chet_or_nechet = '{0}' OR day_of_the_week = '{0}' OR cabinet = '{0}'", searchText);
+                dv.RowFilter = string.Format("numb_week = '{0}' OR chet_or_nechet = '{0}' OR day_of_the_week = '{0}'", searchText);
             }
 
             dataGridViewLessons.DataSource = dv;
@@ -339,14 +305,139 @@ namespace ScheduleForStudents.Controls
 
         private void dataGridViewLessons_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
-            if (e.Control is ComboBox cb && dataGridViewLessons.CurrentCell.OwningColumn is DataGridViewComboBoxColumn)
+            if (e.Control is ComboBox comboBox)
             {
-                cb.DrawMode = DrawMode.OwnerDrawFixed;
-                cb.DrawItem -= ComboBox_DrawItem;
-                cb.DrawItem += ComboBox_DrawItem;
-                cb.SelectedIndexChanged -= ComboBox_SelectedIndexChanged;
-                cb.SelectedIndexChanged += ComboBox_SelectedIndexChanged;
+                // Check if the current cell is in the "Преподаватель" column
+                if (dataGridViewLessons.CurrentCell.OwningColumn.HeaderText == "Преподаватель")
+                {
+                    comboBox.DrawMode = DrawMode.OwnerDrawFixed;
+                    comboBox.DrawItem -= ComboBoxTeacher_DrawItem;
+                    comboBox.DrawItem += ComboBoxTeacher_DrawItem;
+                    comboBox.SelectedIndexChanged -= ComboBox_SelectedIndexChanged;
+                    comboBox.SelectedIndexChanged += ComboBox_SelectedIndexChanged;
+                }
+                else
+                {
+                    comboBox.DrawMode = DrawMode.Normal;
+                    comboBox.DrawItem -= ComboBoxTeacher_DrawItem;
+                    comboBox.SelectedIndexChanged -= ComboBox_SelectedIndexChanged;
+                }
             }
         }
+
+        private void ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+
+            // Check if the current cell is in the "Преподаватель" column
+            if (dataGridViewLessons.CurrentCell?.OwningColumn?.HeaderText == "Преподаватель")
+            {
+                if (comboBox.SelectedItem is DataRowView selectedRow)
+                {
+                    bool isActive = Convert.ToBoolean(selectedRow["does_work_or_not"]);
+                    if (!isActive)
+                    {
+                        MessageBox.Show("Этот преподаватель не работает и не может быть выбран.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        comboBox.SelectedIndex = -1; // Сбрасываем выбор
+                    }
+                }
+            }
+        }
+        private void ComboBoxTeacher_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            ComboBox comboBox = (ComboBox)sender;
+            DataRowView row = (DataRowView)comboBox.Items[e.Index];
+            string teacherName = row["fio"].ToString();
+            bool isActive = Convert.ToBoolean(row["does_work_or_not"]);
+
+            e.DrawBackground();
+
+            // If teacher is inactive, draw in gray
+            if (!isActive)
+            {
+                e.Graphics.DrawString(teacherName, e.Font, Brushes.Gray, e.Bounds);
+            }
+            else
+            {
+                e.Graphics.DrawString(teacherName, e.Font, Brushes.Black, e.Bounds);
+            }
+
+            e.DrawFocusRectangle();
+        }
+        private bool isConflictMessageShown = false;
+        private void dataGridViewLessons_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                if (IsConflictInSchedule(e.RowIndex))
+                {
+                    if (!isConflictMessageShown)
+                    {
+                        // Если обнаружен конфликт, показываем сообщение и откатываем изменения
+                        MessageBox.Show("Пара пересекается по времени с другой парой в этом кабинете", "Пересечение пар", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        isConflictMessageShown = true; // Устанавливаем флаг, чтобы не показывать сообщение снова
+                        dataAdapter.Update(dataTable);
+                        
+                    }
+                }
+                else
+                {
+                    // Если конфликта нет, обновляем данные
+                    dataAdapter.Update(dataTable);
+                    isConflictMessageShown = false; // Сбрасываем флаг после успешного обновления данных
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                isConflictMessageShown = false; // Сбрасываем флаг в случае ошибки
+            }
+        }
+
+        private bool IsConflictInSchedule(int editedRowIndex)
+        {
+            // Получение данных строки, которая была изменена
+            var editedRow = dataGridViewLessons.Rows[editedRowIndex];
+            var editedRoom = editedRow.Cells["id_cabinet"].Value;
+            var editedStartTime = editedRow.Cells["start_time"].Value;
+            var editedEndTime = editedRow.Cells["end_time"].Value;
+
+            // Проверка и приведение типов для времени
+            if (!(editedStartTime is DateTime editedStartTimeDt) || !(editedEndTime is DateTime editedEndTimeDt))
+            {
+                // Если приведение невозможно, считаем, что конфликта нет, т.к. данные некорректны
+                return false; // Или обработайте ситуацию другим способом, если необходимо
+            }
+
+            // Перебор всех строк в DataGridView для проверки конфликтов
+            foreach (DataGridViewRow row in dataGridViewLessons.Rows)
+            {
+                if (row.Index == editedRowIndex) continue; // Пропустить текущую строку
+
+                var room = row.Cells["id_cabinet"].Value;
+                var startTime = row.Cells["start_time"].Value;
+                var endTime = row.Cells["end_time"].Value;
+
+                // Проверка и приведение типов для времени
+                if (!(startTime is DateTime startTimeDt) || !(endTime is DateTime endTimeDt))
+                {
+                    continue; // Пропустить строки с некорректными данными
+                }
+
+                if (editedRoom.Equals(room) &&
+                    ((editedStartTimeDt >= startTimeDt && editedStartTimeDt < endTimeDt) ||
+                     (editedEndTimeDt > startTimeDt && editedEndTimeDt <= endTimeDt) ||
+                     (editedStartTimeDt <= startTimeDt && editedEndTimeDt >= endTimeDt)))
+                {
+                    return true; // Обнаружен конфликт
+                }
+            }
+
+            return false; // Конфликтов нет
+        }
+
+
     }
 }
