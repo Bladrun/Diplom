@@ -26,11 +26,11 @@ namespace ScheduleForStudents
         private void InitializeDB()
         {
 
-            server = "sql7.freesqldatabase.com";
+            server = "schedulemgkit.c1.is";
             port = "3306";
-            database = "sql7707770";
-            uid = "sql7707770";
-            password = "kXTf81kkZI";
+            database = "schedul5_scheduledb";
+            uid = "schedul5_admin";
+            password = "admin_228";
             charset = "utf8mb4";
             string connectionString;
             connectionString = $"SERVER={server};PORT={port};DATABASE={database};UID={uid};PASSWORD={password};CHARSET={charset};";

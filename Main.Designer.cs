@@ -34,6 +34,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.Leftpanel = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.button7 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
@@ -45,7 +46,6 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.Content = new System.Windows.Forms.Panel();
-            this.button7 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.Leftpanel.SuspendLayout();
@@ -123,6 +123,19 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(347, 672);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // button7
+            // 
+            this.button7.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button7.Location = new System.Drawing.Point(3, 590);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(341, 79);
+            this.button7.TabIndex = 7;
+            this.button7.Text = "Изменение кабинетов";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // panel2
             // 
@@ -249,7 +262,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(341, 75);
             this.button1.TabIndex = 0;
-            this.button1.Text = "Изменение пар";
+            this.button1.Text = "Изменение расписания пар";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -262,19 +275,6 @@
             this.Content.Name = "Content";
             this.Content.Size = new System.Drawing.Size(1103, 672);
             this.Content.TabIndex = 3;
-            // 
-            // button7
-            // 
-            this.button7.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.button7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button7.Location = new System.Drawing.Point(3, 590);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(341, 79);
-            this.button7.TabIndex = 7;
-            this.button7.Text = "Изменение кабинетов";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // Main
             // 

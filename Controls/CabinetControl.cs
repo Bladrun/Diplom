@@ -36,7 +36,7 @@ namespace ScheduleForStudents.Controls
 
         private void LoadCabinets()
         {
-            string query = "SELECT * FROM cabinet";
+            string query = "SELECT * FROM cabinets";
             dataAdapter = new MySqlDataAdapter(query, connection);
             MySqlCommandBuilder commandBuilder = new MySqlCommandBuilder(dataAdapter);
             dataTable = new DataTable();

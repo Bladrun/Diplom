@@ -14,7 +14,7 @@ namespace ScheduleForStudents
     public partial class Login : Form
     {
         Main secondform;
-        string connectrionString = "server=localhost;port=3307;username=root;password=;database=schedule";
+        string connectrionString = "server=schedulemgkit.c1.is;port=3306;username=schedul5_admin;password=admin_228;database=schedul5_scheduledb";
         public Login()
         {
             InitializeComponent();

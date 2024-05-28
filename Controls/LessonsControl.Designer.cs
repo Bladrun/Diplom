@@ -29,20 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.dataGridViewLessons = new System.Windows.Forms.DataGridView();
-            this.textBoxSearch = new System.Windows.Forms.TextBox();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.VisiblebuttonDeleteLESS = new System.Windows.Forms.Button();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.toolTip4 = new System.Windows.Forms.ToolTip(this.components);
-            this.toolTip5 = new System.Windows.Forms.ToolTip(this.components);
             this.id_lesson = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.numb_week = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.chet_or_nechet = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -53,6 +44,15 @@
             this.id_cabinet = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.id_group = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.id_teacher = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.textBoxSearch = new System.Windows.Forms.TextBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.VisiblebuttonDeleteLESS = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.toolTip4 = new System.Windows.Forms.ToolTip(this.components);
+            this.toolTip5 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLessons)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
@@ -77,7 +77,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(1661, 51);
             this.label1.TabIndex = 3;
-            this.label1.Text = "ИЗМЕНЕНИЕ ПАР";
+            this.label1.Text = "ИЗМЕНЕНИЕ РАСПИСАНИЯ ПАР";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // dataGridViewLessons
@@ -87,14 +87,14 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewLessons.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewLessons.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewLessons.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridViewLessons.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewLessons.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.id_lesson,
@@ -107,14 +107,14 @@
             this.id_cabinet,
             this.id_group,
             this.id_teacher});
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewLessons.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewLessons.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewLessons.Location = new System.Drawing.Point(0, 98);
             this.dataGridViewLessons.Name = "dataGridViewLessons";
             this.dataGridViewLessons.RowHeadersVisible = false;
@@ -123,6 +123,81 @@
             this.dataGridViewLessons.TabIndex = 8;
             this.dataGridViewLessons.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewLessons_CellEndEdit);
             this.dataGridViewLessons.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridViewLessons_EditingControlShowing);
+            // 
+            // id_lesson
+            // 
+            this.id_lesson.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.id_lesson.DataPropertyName = "id_lesson";
+            this.id_lesson.HeaderText = "id_lesson";
+            this.id_lesson.Name = "id_lesson";
+            this.id_lesson.Visible = false;
+            // 
+            // numb_week
+            // 
+            this.numb_week.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.numb_week.DataPropertyName = "numb_week";
+            this.numb_week.HeaderText = "Номер недели";
+            this.numb_week.Name = "numb_week";
+            // 
+            // chet_or_nechet
+            // 
+            this.chet_or_nechet.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.chet_or_nechet.DataPropertyName = "chet_or_nechet";
+            this.chet_or_nechet.HeaderText = "Четная/Нечетная";
+            this.chet_or_nechet.Name = "chet_or_nechet";
+            // 
+            // day_of_the_week
+            // 
+            this.day_of_the_week.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.day_of_the_week.DataPropertyName = "day_of_the_week";
+            this.day_of_the_week.HeaderText = "День недели";
+            this.day_of_the_week.Name = "day_of_the_week";
+            // 
+            // id_subject
+            // 
+            this.id_subject.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.id_subject.DataPropertyName = "id_subject";
+            this.id_subject.HeaderText = "id_subject";
+            this.id_subject.Name = "id_subject";
+            this.id_subject.Visible = false;
+            // 
+            // start_time
+            // 
+            this.start_time.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.start_time.DataPropertyName = "start_time";
+            this.start_time.HeaderText = "Время начала";
+            this.start_time.Name = "start_time";
+            // 
+            // end_time
+            // 
+            this.end_time.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.end_time.DataPropertyName = "end_time";
+            this.end_time.HeaderText = "Время окончания";
+            this.end_time.Name = "end_time";
+            // 
+            // id_cabinet
+            // 
+            this.id_cabinet.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.id_cabinet.DataPropertyName = "id_cabinet";
+            this.id_cabinet.HeaderText = "id_cabinet";
+            this.id_cabinet.Name = "id_cabinet";
+            this.id_cabinet.Visible = false;
+            // 
+            // id_group
+            // 
+            this.id_group.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.id_group.DataPropertyName = "id_group";
+            this.id_group.HeaderText = "id_group";
+            this.id_group.Name = "id_group";
+            this.id_group.Visible = false;
+            // 
+            // id_teacher
+            // 
+            this.id_teacher.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.id_teacher.DataPropertyName = "id_teacher";
+            this.id_teacher.HeaderText = "id_teacher";
+            this.id_teacher.Name = "id_teacher";
+            this.id_teacher.Visible = false;
             // 
             // textBoxSearch
             // 
@@ -219,81 +294,6 @@
             this.VisiblebuttonDeleteLESS.TabIndex = 21;
             this.VisiblebuttonDeleteLESS.UseVisualStyleBackColor = false;
             this.VisiblebuttonDeleteLESS.Click += new System.EventHandler(this.VisiblebuttonDeleteLESS_Click);
-            // 
-            // id_lesson
-            // 
-            this.id_lesson.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.id_lesson.DataPropertyName = "id_lesson";
-            this.id_lesson.HeaderText = "id_lesson";
-            this.id_lesson.Name = "id_lesson";
-            this.id_lesson.Visible = false;
-            // 
-            // numb_week
-            // 
-            this.numb_week.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.numb_week.DataPropertyName = "numb_week";
-            this.numb_week.HeaderText = "Номер недели";
-            this.numb_week.Name = "numb_week";
-            // 
-            // chet_or_nechet
-            // 
-            this.chet_or_nechet.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.chet_or_nechet.DataPropertyName = "chet_or_nechet";
-            this.chet_or_nechet.HeaderText = "Четная/Нечетная";
-            this.chet_or_nechet.Name = "chet_or_nechet";
-            // 
-            // day_of_the_week
-            // 
-            this.day_of_the_week.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.day_of_the_week.DataPropertyName = "day_of_the_week";
-            this.day_of_the_week.HeaderText = "День недели";
-            this.day_of_the_week.Name = "day_of_the_week";
-            // 
-            // id_subject
-            // 
-            this.id_subject.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.id_subject.DataPropertyName = "id_subject";
-            this.id_subject.HeaderText = "id_subject";
-            this.id_subject.Name = "id_subject";
-            this.id_subject.Visible = false;
-            // 
-            // start_time
-            // 
-            this.start_time.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.start_time.DataPropertyName = "start_time";
-            this.start_time.HeaderText = "Время начала";
-            this.start_time.Name = "start_time";
-            // 
-            // end_time
-            // 
-            this.end_time.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.end_time.DataPropertyName = "end_time";
-            this.end_time.HeaderText = "Время окончания";
-            this.end_time.Name = "end_time";
-            // 
-            // id_cabinet
-            // 
-            this.id_cabinet.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.id_cabinet.DataPropertyName = "id_cabinet";
-            this.id_cabinet.HeaderText = "id_cabinet";
-            this.id_cabinet.Name = "id_cabinet";
-            this.id_cabinet.Visible = false;
-            // 
-            // id_group
-            // 
-            this.id_group.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.id_group.DataPropertyName = "id_group";
-            this.id_group.HeaderText = "id_group";
-            this.id_group.Name = "id_group";
-            this.id_group.Visible = false;
-            // 
-            // id_teacher
-            // 
-            this.id_teacher.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.id_teacher.DataPropertyName = "id_teacher";
-            this.id_teacher.HeaderText = "id_teacher";
-            this.id_teacher.Name = "id_teacher";
-            this.id_teacher.Visible = false;
             // 
             // LessonsControl
             // 

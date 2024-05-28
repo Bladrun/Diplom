@@ -114,7 +114,7 @@ namespace ScheduleForStudents.Controls
                 DataTable subjectsTable = LoadDataTable("SELECT id_subject, name_of_the_subject FROM subjects");
                 DataTable teachersTable = LoadDataTable("SELECT id_teacher, fio, does_work_or_not FROM teacher");
                 DataTable groupsTable = LoadDataTable("SELECT id_group, short_number FROM students_groups");
-                DataTable roomsTable = LoadDataTable("SELECT id_cabinet, numb_cab FROM cabinet");
+                DataTable roomsTable = LoadDataTable("SELECT id_cabinet, numb_cab FROM cabinets");
 
                 // Create and configure Subject ComboBox column
                 DataGridViewComboBoxColumn subjectComboBox = new DataGridViewComboBoxColumn
