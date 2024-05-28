@@ -17,8 +17,8 @@ namespace ScheduleForStudents
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            string surname = "";
-            Application.Run(new Main(surname));
+            //string surname = "";
+            Application.Run(new Login());
 
             //Login_Form flogin = new Login_Form();
             //if(flogin.ShowDialog() == DialogResult.OK )
