@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -83,7 +77,7 @@ namespace ScheduleForStudents.Controls
                                        .Replace("_", "[_]")
                                        .Replace("'", "''");
 
-                // Применяем фильтр для точного соответствия
+                // фильтр для точного соответствия
                 dv.RowFilter = string.Format("group_number = '{0}' OR short_number = '{0}'", searchText);
             }
 
@@ -123,7 +117,7 @@ namespace ScheduleForStudents.Controls
                     DataRow selectedRowData = selectedRowView.Row;
                     int id_group = Convert.ToInt32(selectedRowData["id_group"]);
 
-                    // Проверяем, используется ли учитель в таблице Расписание
+                    // Проверяем, используется ли препод в таблице Расписание
                     string checkQuery = "SELECT COUNT(*) FROM schedule_week WHERE id_group = @id_group";
                     MySqlCommand checkCmd = new MySqlCommand(checkQuery, connection);
                     checkCmd.Parameters.AddWithValue("@id_group", id_group);
@@ -147,7 +141,6 @@ namespace ScheduleForStudents.Controls
                     {
                         connection.Close();
                     }
-
 
                     selectedRowData.Delete();
 

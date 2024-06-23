@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Office.Interop.Excel;
 using MySql.Data.MySqlClient;
 
 namespace ScheduleForStudents
@@ -23,7 +22,7 @@ namespace ScheduleForStudents
             InitializeDB();
         }
 
-        private void InitializeDB()
+        private void InitializeDB() ///Инциализация бд
         {
 
             server = "schedulemgkit.c1.is";
@@ -38,7 +37,7 @@ namespace ScheduleForStudents
             connection = new MySqlConnection(connectionString);
         }
 
-        public MySqlConnection GetConnection()
+        public MySqlConnection GetConnection() ///Подлючение бд
         {
             return connection;
         }

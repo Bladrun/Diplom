@@ -79,10 +79,7 @@ namespace ScheduleForStudents.Controls
                     int rowIndex = selectedRow.Index;
                     DataRowView selectedRowView = selectedRow.DataBoundItem as DataRowView;
                     DataRow selectedRowData = selectedRowView.Row;
-
-
                     selectedRowData.Delete();
-
                     try
                     {
                         dataAdapter.Update(dataTable);
@@ -122,7 +119,6 @@ namespace ScheduleForStudents.Controls
         private void textBoxSearch_TextChanged(object sender, EventArgs e)
         {
             string searchText = textBoxSearch.Text.Trim();
-
             DataView dv = dataTable.DefaultView;
 
             if (string.IsNullOrEmpty(searchText))
@@ -138,7 +134,7 @@ namespace ScheduleForStudents.Controls
                                        .Replace("_", "[_]")
                                        .Replace("'", "''");
 
-                // Применяем фильтр для точного соответствия
+                // фильтр для точного соответствия
                 dv.RowFilter = string.Format("numb_cab = '{0}'", searchText);
             }
 

@@ -1,6 +1,4 @@
-﻿using MySql.Data.MySqlClient;
-using Org.BouncyCastle.Pqc.Crypto.Lms;
-using ScheduleForStudents.Controls;
+﻿using ScheduleForStudents.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,7 +32,6 @@ namespace ScheduleForStudents
             form.FormClosed += Login_FormClosed;
             form.Show();
             this.Hide();
-            
         }
 
         public void Login_FormClosed(object sender, FormClosedEventArgs e)
@@ -45,11 +42,9 @@ namespace ScheduleForStudents
         public void showControl(Control control)
         {
             Content.Controls.Clear();
-
             control.Dock = DockStyle.Fill;
             control.BringToFront();
             control.Focus();
-
             Content.Controls.Add(control);
         }
 

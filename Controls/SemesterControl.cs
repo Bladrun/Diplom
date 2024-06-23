@@ -94,14 +94,14 @@ namespace ScheduleForStudents.Controls
 
             if (dataGridViewSemester.Columns["Subject"] == null)
             {
-                // Load data for ComboBoxes
+                // Загружаем данные в комбобоксы
                 DataTable weekTable = LoadDataTable("SELECT id_lesson, numb_week FROM schedule_week");
                 DataTable groupsTable = LoadDataTable("SELECT id_group, short_number FROM students_groups");
 
-                // Create and configure Subject ComboBox column
+                // Создаем и конфигурируем колонку с комбобоксом
                 DataGridViewComboBoxColumn weekComboBox = new DataGridViewComboBoxColumn
                 {
-                    DataPropertyName = "id_lesson", // column name in schedule_week
+                    DataPropertyName = "id_lesson", // название колонки в таблице
                     HeaderText = "Номер недели",
                     DataSource = weekTable,
                     ValueMember = "id_lesson",
@@ -109,10 +109,10 @@ namespace ScheduleForStudents.Controls
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                 };
 
-
+                // Создаем и конфигурируем колонку с комбобоксом
                 DataGridViewComboBoxColumn groupComboBox = new DataGridViewComboBoxColumn
                 {
-                    DataPropertyName = "id_group", // column name in schedule_week
+                    DataPropertyName = "id_group", // название колонки в таблице
                     HeaderText = "Номер группы",
                     DataSource = groupsTable,
                     ValueMember = "id_group",
@@ -120,13 +120,13 @@ namespace ScheduleForStudents.Controls
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                 };
 
-                // Add ComboBox columns to DataGridView
+                // Добавляем комбобоксы на датагрид
                 dataGridViewSemester.Columns.Add(weekComboBox);
                 dataGridViewSemester.Columns.Add(groupComboBox);
             }
         }
 
-        private DataTable LoadDataTable(string query)
+        private DataTable LoadDataTable(string query) ///Грузим данные в таблицу
         {
             DataTable table = new DataTable();
             try
@@ -200,7 +200,6 @@ namespace ScheduleForStudents.Controls
             MessageBox.Show("База данных синхронизирована");
         }
 
-
         private void textBoxSearch_TextChanged(object sender, EventArgs e)
         {
             string searchText = textBoxSearch.Text.Trim();
@@ -220,7 +219,7 @@ namespace ScheduleForStudents.Controls
                                        .Replace("_", "[_]")
                                        .Replace("'", "''");
 
-                // Применяем фильтр для точного соответствия
+                // фильтр для точного соответствия
                 dv.RowFilter = string.Format("semester_number = '{0}' OR year = '{0}'", searchText);
             }
 

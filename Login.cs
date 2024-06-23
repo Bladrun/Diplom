@@ -1,12 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ScheduleForStudents
@@ -29,11 +24,8 @@ namespace ScheduleForStudents
             }
         }
         
-       
-
         private void button1_Click(object sender, EventArgs e)
         {
-            
             using (MySqlConnection connection = new MySqlConnection(connectrionString))
             {
                 try
@@ -47,8 +39,7 @@ namespace ScheduleForStudents
                     DataTable table = new DataTable();
                     adapter.Fill(table);
                     using (MySqlDataReader reader = command.ExecuteReader())
-                    {
-                        
+                    {  
                         if (table.Rows.Count > 0)
                         {
                             if (reader.Read())
@@ -78,7 +69,6 @@ namespace ScheduleForStudents
                         }
                         connection.Close();
                     }
-
                 }
                 catch (MySqlException ex)
                 {
@@ -139,7 +129,5 @@ namespace ScheduleForStudents
                 textBoxUserPassword.UseSystemPasswordChar = true;
             }
         }
-
-        
     }
 }

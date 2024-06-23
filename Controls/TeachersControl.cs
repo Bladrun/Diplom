@@ -22,7 +22,7 @@ namespace ScheduleForStudents.Controls
         private void TeachersControl_Load(object sender, EventArgs e)
         {
             
-            //dataGridViewTeachers.CellEndEdit += dataGridViewTeachers_CellEndEdit;
+            dataGridViewTeachers.CellEndEdit += dataGridViewTeachers_CellEndEdit;
             toolTip1.SetToolTip(button1, "Нажмите, чтобы синхронизировать данные");
             toolTip4.SetToolTip(button3, "Нажмите, чтобы экспортировать данные в Excel-таблицу");
             toolTip5.SetToolTip(VisiblebuttonDeleteTeach, "Нажмите, чтобы удалить данные");
@@ -171,8 +171,6 @@ namespace ScheduleForStudents.Controls
             }
         }
 
-        
-
         private void button3_Click(object sender, EventArgs e)
         {
             Excel.Application exApp = new Excel.Application();
@@ -211,7 +209,7 @@ namespace ScheduleForStudents.Controls
                                        .Replace("_", "[_]")
                                        .Replace("'", "''");
 
-                // Применяем фильтр для точного соответствия
+                // фильтр для точного соответствия
                 dv.RowFilter = string.Format("fio = '{0}'", searchText);
             }
 
@@ -237,8 +235,5 @@ namespace ScheduleForStudents.Controls
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
-
-        
     }
-
 }

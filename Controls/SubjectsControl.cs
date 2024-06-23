@@ -84,7 +84,7 @@ namespace ScheduleForStudents.Controls
                                        .Replace("_", "[_]")
                                        .Replace("'", "''");
 
-                // Применяем фильтр для точного соответствия
+                // фильтр для точного соответствия
                 dv.RowFilter = string.Format("name_of_the_subject = '{0}'", searchText);
             }
 
@@ -154,7 +154,7 @@ namespace ScheduleForStudents.Controls
                     DataRow selectedRowData = selectedRowView.Row;
                     int id_subject = Convert.ToInt32(selectedRowData["id_subject"]);
 
-                    // Проверяем, используется ли учитель в таблице Расписание
+                    // Проверяем, используется ли предмеи в таблице Расписание
                     string checkQuery = "SELECT COUNT(*) FROM schedule_week WHERE id_subject = @id_subject";
                     MySqlCommand checkCmd = new MySqlCommand(checkQuery, connection);
                     checkCmd.Parameters.AddWithValue("@id_subject", id_subject);
@@ -178,7 +178,6 @@ namespace ScheduleForStudents.Controls
                     {
                         connection.Close();
                     }
-
 
                     selectedRowData.Delete();
 
